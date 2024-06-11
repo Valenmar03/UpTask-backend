@@ -1,9 +1,19 @@
-import { Router } from 'express'
-import { ProjectController } from '../controllers/projectController'
+import { Router } from "express";
+import { body } from "express-validator";
 
-const router = Router()
+import { ProjectController } from "../controllers/ProjectController";
+import { handleInputErrors } from "../middleware/validation";
 
-router.post('/', ProjectController.createProject)
-router.get('/', ProjectController.getAllProjects)
+const router = Router();
 
-export default router
+router.post(
+   "/",
+   body("projectName").notEmpty().withMessage("Project Name is required"),
+   body("clientName").notEmpty().withMessage("Client Name is required"),
+   body("description").notEmpty().withMessage("Description is required"),
+    handleInputErrors,
+   ProjectController.createProject
+);
+router.get("/", ProjectController.getAllProjects);
+
+export default router;
