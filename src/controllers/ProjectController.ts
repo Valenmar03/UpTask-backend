@@ -15,11 +15,31 @@ export class ProjectController {
         } catch (error) {
             console.log(colors.red('Error creating project...'))
             console.log(error)
-            res.status(400).send({error: 'Error creating project', message: error.message})
         }
     }
 
     static getAllProjects = async (req: Request, res: Response) => {
-        res.send('Todos los proyectos')
+        try {
+            const projects = await Project.find({})
+            res.json(projects)
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+    
+    static getProjectById = async (req: Request, res: Response) => {
+        const { id } = req.params
+        try {
+            const project = await Project.findById(id)
+            if(!project) {
+                const error = new Error(`Project not found`)
+                return res.status(404).json({error: error.message})
+            }
+            res.json(project)
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 }
