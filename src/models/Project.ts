@@ -1,6 +1,6 @@
 import mongoose, {Schema, Document} from "mongoose";
 
-export type ProjectType = {
+export type ProjectType = Document & {
     projectName: string;
     clientName: string;
     description: string;
