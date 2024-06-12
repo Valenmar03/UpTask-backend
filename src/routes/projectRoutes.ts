@@ -40,8 +40,10 @@ router.delete("/:id",
    ProjectController.deleteProject
 )
 
+
+router.param('projectId', projectExists) // Ejecuta projectExists en todas los endpoints que tengan "/:projectId" como param
+
 router.post('/:projectId/tasks', 
-   projectExists,
    body("name").notEmpty().withMessage("Name is required"),
    body("description").notEmpty().withMessage("Description is required"),
    handleInputErrors,
@@ -49,12 +51,10 @@ router.post('/:projectId/tasks',
 )
 
 router.get('/:projectId/tasks',
-   projectExists, 
    TaskController.getTasksByProjectId
 )
 
 router.get('/:projectId/tasks/:taskId',
-   projectExists,
    param("taskId").isMongoId().withMessage("Id not valid"),
    handleInputErrors, 
    TaskController.getTasksById
