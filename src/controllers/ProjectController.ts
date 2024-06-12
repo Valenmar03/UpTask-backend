@@ -14,7 +14,7 @@ export class ProjectController {
             res.send({status: 'success', message: 'Project created succesfully'})
         } catch (error) {
             console.log(colors.red('Error creating project...'))
-            console.log(error)
+            res.status(500).send({status: 'error', message: 'Error creating project'})
         }
     }
 
@@ -24,7 +24,7 @@ export class ProjectController {
             res.json(projects)
         } catch (error) {
             console.log(colors.red('Error finding all projects...'))
-            console.log(error)
+            res.status(500).send({status: 'error', message: error.message})
         }
 
     }
@@ -39,8 +39,8 @@ export class ProjectController {
             }
             res.json(project)
         } catch (error) {
-            console.log(colors.red('Error finding a project by Id...'))
-            console.log(error)
+            console.log(colors.red('Error finding a project by Id...'))            
+            res.status(500).send({status: 'error', message: error.message})
         }
     }
 
@@ -56,7 +56,7 @@ export class ProjectController {
             res.send({status: 'success', message: 'Product updated successfully'})
         } catch (error) {
             console.log(colors.red('Error updating a project...'))
-            console.log(error)
+            res.status(500).send({status: 'error', message: error.message})
         }
     }
 
@@ -66,13 +66,13 @@ export class ProjectController {
             const project = await Project.findById(id)
             if(!project) {
                 const error = new Error(`Project not found`)
-                return res.status(404).json({status: 'error', error: error.message})
+                return res.status(404).send({status: 'error', error: error.message})
             }
             await project.deleteOne()
             res.send({status: 'success', message: 'Product deleted successfully'})
         } catch (error) {
             console.log(colors.red('Error deleting project...'))
-            console.log(error)
+            res.status(500).send({status: 'error', message: error.message})
         }
     }
 }
