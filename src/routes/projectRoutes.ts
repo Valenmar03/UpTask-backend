@@ -53,4 +53,11 @@ router.get('/:projectId/tasks',
    TaskController.getTasksByProjectId
 )
 
+router.get('/:projectId/tasks/:taskId',
+   projectExists,
+   param("taskId").isMongoId().withMessage("Id not valid"),
+   handleInputErrors, 
+   TaskController.getTasksById
+)
+
 export default router;
