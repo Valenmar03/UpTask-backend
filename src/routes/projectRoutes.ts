@@ -5,6 +5,7 @@ import { ProjectController } from "../controllers/ProjectController";
 import { handleInputErrors } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { projectExists } from "../middleware/project";
+import { taskExists } from "../middleware/task";
 
 const router = Router();
 
@@ -43,16 +44,19 @@ router.delete("/:id",
 
 router.param('projectId', projectExists) // Ejecuta projectExists en todas los endpoints que tengan "/:projectId" como param
 
+
 router.post('/:projectId/tasks', 
    body("name").notEmpty().withMessage("Name is required"),
    body("description").notEmpty().withMessage("Description is required"),
    handleInputErrors,
    TaskController.createTask
 )
-
+   
 router.get('/:projectId/tasks',
    TaskController.getTasksByProjectId
 )
+
+router.param('taskId', taskExists) 
 
 router.get('/:projectId/tasks/:taskId',
    param("taskId").isMongoId().withMessage("Id not valid"),
@@ -72,6 +76,13 @@ router.delete('/:projectId/tasks/:taskId',
    param("taskId").isMongoId().withMessage("Id not valid"),
    handleInputErrors, 
    TaskController.deleteTask
+)
+
+router.post('/:projectId/tasks/:taskId/status',
+   param("taskId").isMongoId().withMessage("Id not valid"),
+   body('status').notEmpty().withMessage('Status is required'),
+   handleInputErrors, 
+   TaskController.changeTaskStatus
 )
 
 export default router;
