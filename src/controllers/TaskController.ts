@@ -28,12 +28,6 @@ export class TaskController {
    static getTasksById = async (req: Request, res: Response) => {
       try {
          const task = req.task
-         if (task.project.toString() !== req.project.id) {
-            const error = new Error("Bad Request");
-            return res
-               .status(400)
-               .send({ status: "error", message: error.message });
-         }
          res.json(task);
       } catch (error) {
          res.status(500).send({ status: "error", message: error.message });
@@ -43,13 +37,6 @@ export class TaskController {
    static updateTask = async (req: Request, res: Response) => {
       try {
          const task = req.task
-         if (task.project.toString() !== req.project.id) {
-            const error = new Error("Bad Request");
-            return res
-               .status(400)
-               .send({ status: "error", message: error.message });
-         }
-
          task.name = req.body.name;
          task.description = req.body.description;
          await task.save();
@@ -65,13 +52,6 @@ export class TaskController {
          const { taskId } = req.params
          const project = req.project;
          const task = req.task
-         
-         if (task.project.toString() !== project.id) {
-            const error = new Error("Bad Request");
-            return res
-               .status(400)
-               .send({ status: "error", message: error.message });
-         }
          project.tasks = project.tasks.filter(
             (task) => task._id.toString() !== taskId
          );
