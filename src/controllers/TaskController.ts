@@ -43,4 +43,50 @@ export class TaskController {
             res.status(500).send({status: 'error', message: error.message})
         }
     }
+
+    static updateTask = async (req: Request, res: Response) => {
+        try {
+            const { taskId } = req.params
+            const task = await Task.findById(taskId)
+            if(!task){
+                const error = new Error('Task not found')
+                return res.status(404).send({status: 'error', message: error.message})
+            }
+            if(task.project.id !== req.project.id){
+                const error = new Error('Bad Request')
+                return res.status(400).send({status: 'error', message: error.message})
+            }
+            
+            task.name = req.body.name
+            task.description = req.body.description
+            await task.save()
+
+            res.json({status: 'success', message: 'Task updated successfully'})
+        } catch (error) {
+            res.status(500).send({status: 'error', message: error.message})
+        }
+    }
+
+    static deleteTask = async (req: Request, res: Response) => {
+        try {
+            const { taskId } = req.params
+            const project = req.project
+            const task = await Task.findById(taskId, req.body).populate('project')
+            if(!task){
+                const error = new Error('Task not found')
+                return res.status(404).send({status: 'error', message: error.message})
+            }
+            if(task.project.id !== project.id){
+                const error = new Error('Bad Request')
+                return res.status(400).send({status: 'error', message: error.message})
+            }
+            project.tasks = project.tasks.filter(task => task._id.toString() !== taskId)
+            console.log(project.tasks)
+            await Promise.allSettled([ task.deleteOne(), project.save() ])
+
+            res.json({status: 'success', message: 'Task deleted successfully'})
+        } catch (error) {
+            res.status(500).send({status: 'error', message: error.message})
+        }
+    }
 }
