@@ -9,6 +9,7 @@ import { taskBelongsProject, taskExists } from "../middleware/task";
 
 const router = Router();
 
+
 router.post(
    "/",
    body("projectName").notEmpty().withMessage("Project Name is required"),
@@ -51,7 +52,7 @@ router.post('/:projectId/tasks',
    handleInputErrors,
    TaskController.createTask
 )
-   
+
 router.get('/:projectId/tasks',
    TaskController.getTasksByProjectId
 )

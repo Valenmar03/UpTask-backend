@@ -51,13 +51,13 @@ export class ProjectController {
                 const error = new Error(`Project not found`)
                 return res.status(404).json({status: 'error', error: error.message})
             }
-            req.project.projectName = req.body.projectName
-            req.project.clientName = req.body.clientName
-            req.project.description = req.body.description
+            project.projectName = req.body.projectName
+            project.clientName = req.body.clientName
+            project.description = req.body.description
             await project.save()
             res.send({status: 'success', message: 'Product updated successfully'})
         } catch (error) {
-            console.log(colors.red('Error updating a project...'))
+            console.log(colors.red(error))
             res.status(500).send({status: 'error', message: error.message})
         }
     }
