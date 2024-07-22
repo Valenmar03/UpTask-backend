@@ -1,9 +1,10 @@
 import type { Request, Response } from "express"
-import bcrypt from 'bcrypt'
 import User from "../models/Auth"
 import { hashPassword } from "../utils/auth"
 import { generateToken } from "../utils/token"
 import Token from "../models/Token"
+import { AuthEmail } from "../emails/AuthEmail"
+
 
 export class AuthController {
     static createAccount = async (req: Request, res: Response) => {
@@ -22,6 +23,13 @@ export class AuthController {
             const token = new Token()
             token.token = generateToken()
             token.user = user.id
+
+            AuthEmail.confirmationEmail({
+                email: user.email,
+                name: user.name,
+                token: token.token
+            })
+            
 
             await Promise.allSettled([user.save(), token.save()]) // Realiza las dos promesas al mismo tiempo. 
             res.send('Cuenta creada, revisa tu email para confirmarla')
