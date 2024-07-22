@@ -1,6 +1,5 @@
 import mongoose, {Schema, Document} from "mongoose";
 
-
 export type UserType = Document & {
     email: string;
     password: string;
