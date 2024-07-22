@@ -1,6 +1,6 @@
 import type { Request, Response } from "express"
 import User from "../models/Auth"
-import { hashPassword } from "../utils/auth"
+import { checkPassword, hashPassword } from "../utils/auth"
 import { generateToken } from "../utils/token"
 import Token from "../models/Token"
 import { AuthEmail } from "../emails/AuthEmail"
@@ -45,7 +45,7 @@ export class AuthController {
 
             if(!tokenExists){
                 const error = new Error('Invalid Token') 
-                return res.status(409).send({error: error.message})
+                return res.status(404).send({error: error.message})
             }
 
             const user = await User.findById(tokenExists.user)
@@ -54,6 +54,43 @@ export class AuthController {
             await Promise.allSettled([user.save(), tokenExists.deleteOne()])
             
             res.send('Account confirmed')
+        } catch (error) {
+            res.status(500).send({error: error.message})
+        }
+    }
+
+    static logIn = async (req: Request, res: Response) => {
+        try {
+            const { email, password } = req.body
+            const user = await User.findOne({email: email})
+            if(!user){
+                const error = new Error('User not found') 
+                return res.status(404).send({error: error.message})
+            }
+            if(!user.confirmed){
+                const token = new Token()
+                token.user = user.id
+                token.token = generateToken()
+
+                await token.save()
+
+                AuthEmail.confirmationEmail({
+                    email: user.email,
+                    name: user.name,
+                    token: token.token
+                })
+                
+                const error = new Error('User is not confirmed, check your email to confirm the account') 
+                return res.status(401).send({error: error.message})
+            }
+
+            const isPasswordCorrect = await checkPassword(password, user.password)
+            if(!isPasswordCorrect){
+                const error = new Error('Password is not correct') 
+                return res.status(401).send({error: error.message})
+            }
+
+            res.send('Autenticando...')
         } catch (error) {
             res.status(500).send({error: error.message})
         }
