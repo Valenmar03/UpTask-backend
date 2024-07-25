@@ -15,11 +15,9 @@ export class AuthController {
                 const error = new Error('User already exists') 
                 return res.status(409).send({error: error.message})
             }
-
             const user = new User(req.body)
-
             user.password = await hashPassword(req.body.password)
-            
+        
             const token = new Token()
             token.token = generateToken()
             token.user = user.id
