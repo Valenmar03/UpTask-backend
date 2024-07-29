@@ -30,7 +30,7 @@ export class AuthController {
             
 
             await Promise.allSettled([user.save(), token.save()]) // Realiza las dos promesas al mismo tiempo. 
-            res.send('Cuenta creada, revisa tu email para confirmarla')
+            res.send('Account created successfully, check email to confirm')
         } catch(error) {
             res.status(500).send({error: 'Hubo un error'})
         }
@@ -38,7 +38,7 @@ export class AuthController {
 
     static confirmAccount = async (req: Request, res: Response) => {
         try {
-            const {token} = req.body
+            const { token } = req.body
             const tokenExists = await Token.findOne({token})
 
             if(!tokenExists){
@@ -91,6 +91,37 @@ export class AuthController {
             res.send('Autenticando...')
         } catch (error) {
             res.status(500).send({error: error.message})
+        }
+    }
+
+    static requestConfirmationCode = async (req: Request, res: Response) => {
+        try {
+
+            const user = await User.findOne({email: req.body.email})
+            if(!user){
+                const error = new Error("User doesn't exist") 
+                return res.status(404).send({error: error.message})
+            }
+            if(user.confirmed){
+                const error = new Error('User is already confirmed') 
+                return res.status(403).send({error: error.message})
+            }
+        
+            const token = new Token()
+            token.token = generateToken()
+            token.user = user.id
+
+            AuthEmail.confirmationEmail({
+                email: user.email,
+                name: user.name,
+                token: token.token
+            })
+            
+
+            await token.save()
+            res.send('A new confirmation code was sent, check email to confirm')
+        } catch(error) {
+            res.status(500).send({error: 'Hubo un error'})
         }
     }
 }

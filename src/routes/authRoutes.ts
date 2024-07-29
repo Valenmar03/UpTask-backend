@@ -39,4 +39,11 @@ router.post('/login',
     AuthController.logIn
 )
 
+router.post('/request-new-code',
+    body('email')
+        .notEmpty().withMessage('Email is required'),
+    handleInputErrors,
+    AuthController.requestConfirmationCode
+)
+
 export default router
