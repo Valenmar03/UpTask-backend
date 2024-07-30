@@ -88,7 +88,7 @@ export class AuthController {
                 return res.status(401).send({error: error.message})
             }
 
-            res.send('Autenticando...')
+            res.send('User authenticated')
         } catch (error) {
             res.status(500).send({error: error.message})
         }
