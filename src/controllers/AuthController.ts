@@ -39,7 +39,8 @@ export class AuthController {
     static confirmAccount = async (req: Request, res: Response) => {
         try {
             const { token } = req.body
-            const tokenExists = await Token.findOne({token})
+            const tokenExists = await Token.findOne({token: token})
+
 
             if(!tokenExists){
                 const error = new Error('Invalid Token') 
