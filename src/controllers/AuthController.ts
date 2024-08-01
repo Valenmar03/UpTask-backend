@@ -124,4 +124,30 @@ export class AuthController {
             res.status(500).send({error: 'Hubo un error'})
         }
     }
+
+    static forgotPassword = async (req: Request, res: Response) => {
+        try {
+
+            const user = await User.findOne({email: req.body.email})
+            if(!user){
+                const error = new Error("User doesn't exist") 
+                return res.status(404).send({error: error.message})
+            }
+        
+            const token = new Token()
+            token.token = generateToken()
+            token.user = user.id
+
+            AuthEmail.forgotPasswordEmail({
+                email: user.email,
+                name: user.name,
+                token: token.token
+            })
+
+            await token.save()
+            res.send('Check email and follow instructions')
+        } catch(error) {
+            res.status(500).send({error: 'Hubo un error'})
+        }
+    }
 }
