@@ -145,7 +145,7 @@ export class AuthController {
             })
 
             await token.save()
-            res.send('Check email and follow instructions')
+            res.send('Check email and follow instructions to restore password')
         } catch(error) {
             res.status(500).send({error: 'Hubo un error'})
         }
