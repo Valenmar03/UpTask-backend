@@ -179,7 +179,7 @@ export class AuthController {
 
             await Promise.allSettled([user.save(), tokenExists.deleteOne()])
 
-            res.send('Password succesfully updated')
+            res.send('Password succesfully updated. Reditecting...')
         } catch (error) {
             res.status(500).send({error: error.message})
         }
