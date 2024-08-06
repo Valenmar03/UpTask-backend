@@ -20,7 +20,13 @@ export class ProjectController {
 
     static getAllProjects = async (req: Request, res: Response) => {
         try {
-            const projects = await Project.find({}).populate('tasks')
+            const projects = await Project.find({
+                $or: [
+                    {
+                        manager: { $in: req.user.id}
+                    }
+                ]
+            }).populate('tasks')
             res.json(projects)
         } catch (error) {
             console.log(colors.red('Error finding all projects...'))
