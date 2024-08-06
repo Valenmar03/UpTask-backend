@@ -1,5 +1,4 @@
 import colors from 'colors'
-
 import type { Request, Response } from 'express'
 import Project from '../models/Project'
 
