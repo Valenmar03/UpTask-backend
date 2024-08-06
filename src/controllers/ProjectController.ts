@@ -43,6 +43,10 @@ export class ProjectController {
                 const error = new Error(`Project not found`)
                 return res.status(404).json({status: 'error', error: error.message})
             }
+            if(project.manager.toString() !== req.user.id.toString()){
+                const error = new Error(`Unauthorized`)
+                return res.status(401).json({status: 'error', error: error.message})
+            }
             res.json(project)
         } catch (error) {
             console.log(colors.red('Error finding a project by Id...'))            
@@ -57,6 +61,10 @@ export class ProjectController {
             if(!project) {
                 const error = new Error(`Project not found`)
                 return res.status(404).json({status: 'error', error: error.message})
+            }
+            if(project.manager.toString() !== req.user.id.toString()){
+                const error = new Error(`Unauthorized`)
+                return res.status(401).json({status: 'error', error: error.message})
             }
             project.projectName = req.body.projectName
             project.clientName = req.body.clientName
@@ -77,8 +85,12 @@ export class ProjectController {
                 const error = new Error(`Project not found`)
                 return res.status(404).send({status: 'error', error: error.message})
             }
+            if(project.manager.toString() !== req.user.id.toString()){
+                const error = new Error(`Unauthorized`)
+                return res.status(401).json({status: 'error', error: error.message})
+            }
             await project.deleteOne()
-            res.send({status: 'success', message: 'Product deleted successfully'})
+            res.send({status: 'success', message: 'Project deleted successfully'})
         } catch (error) {
             console.log(colors.red('Error deleting project...'))
             res.status(500).send({status: 'error', message: error.message})
