@@ -3,13 +3,12 @@ import jwt from "jsonwebtoken";
 import User, { UserType } from "../models/Auth";
 
 declare global {
-    namespace Express{
-        interface Request {
-            user?: UserType
-        }
-    }
+   namespace Express {
+      interface Request {
+         user?: UserType;
+      }
+   }
 }
-
 
 export const authenticate = async (
    req: Request,
@@ -26,9 +25,10 @@ export const authenticate = async (
    try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       if (typeof decoded === "object" && decoded.id) {
-         const user = await User.findById(decoded.id).select('_id name email');
+         const user = await User.findById(decoded.id).select("_id name email");
          if (user) {
-            req.user = user
+            req.user = user;
+            next();
          } else {
             res.status(500).send({ error: "Invalid Token" });
          }
@@ -36,6 +36,4 @@ export const authenticate = async (
    } catch (error) {
       res.status(500).send({ error: "Invalid Token" });
    }
-
-   next();
 };

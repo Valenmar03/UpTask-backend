@@ -187,4 +187,8 @@ export class AuthController {
             res.status(500).send({error: error.message})
         }
     }
+
+    static user = async (req: Request, res: Response) => {
+          return res.send(req.user)
+    }
 }
