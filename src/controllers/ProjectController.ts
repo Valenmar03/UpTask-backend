@@ -25,7 +25,7 @@ export class ProjectController {
                         manager: { $in: req.user.id}
                     }
                 ]
-            }).populate('tasks')
+            })
             res.json(projects)
         } catch (error) {
             console.log(colors.red('Error finding all projects...'))
@@ -37,7 +37,7 @@ export class ProjectController {
     static getProjectById = async (req: Request, res: Response) => {
         const { id } = req.params
         try {
-            const project = await Project.findById(id).populate('tasks')
+            const project =  await Project.findById(id).populate('tasks')
             if(!project) {
                 const error = new Error(`Project not found`)
                 return res.status(404).json({status: 'error', error: error.message})
