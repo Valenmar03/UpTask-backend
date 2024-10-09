@@ -17,7 +17,7 @@ export class TeamMemberController {
 
         const user = await User.findOne({ email }).select(' id email name')
         if(!user){
-            res.status(404).send({error: "User not found"})
+            return res.status(404).send({error: "User not found"})
         }
         res.send(user)
     }
