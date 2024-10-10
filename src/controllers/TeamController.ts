@@ -9,7 +9,7 @@ export class TeamMemberController {
             path: 'team',
             select: 'id email name'
         })
-        res.send({status: 'success', payload: project.team})
+        res.json(project.team)
     }
 
     static findMemberByEmail = async (req: Request, res: Response) => {
