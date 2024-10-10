@@ -7,7 +7,8 @@ export class ProjectController {
     static createProject = async (req: Request, res: Response) => {
 
         const project = new Project(req.body);  
-        project.manager = req.user.id   
+        project.manager = req.user.id
+        project.team = [req.user.id]   
         try {
             await project.save()
             res.send({status: 'success', message: 'Project created succesfully'})
