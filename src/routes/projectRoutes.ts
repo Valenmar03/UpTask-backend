@@ -5,7 +5,7 @@ import { ProjectController } from "../controllers/ProjectController";
 import { handleInputErrors } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { projectExists } from "../middleware/project";
-import { taskBelongsProject, taskExists } from "../middleware/task";
+import { hasAuthorization, taskBelongsProject, taskExists } from "../middleware/task";
 import { authenticate } from "../middleware/auth";
 import { TeamMemberController } from "../controllers/TeamController";
 
@@ -70,6 +70,7 @@ router.get('/:projectId/tasks/:taskId',
 )
 
 router.put('/:projectId/tasks/:taskId',
+   hasAuthorization,
    param("taskId").isMongoId().withMessage("Id not valid"),
    body("name").notEmpty().withMessage("Name is required"),
    body("description").notEmpty().withMessage("Description is required"),
@@ -78,6 +79,7 @@ router.put('/:projectId/tasks/:taskId',
 )
 
 router.delete('/:projectId/tasks/:taskId',
+   hasAuthorization,
    param("taskId").isMongoId().withMessage("Id not valid"),
    handleInputErrors, 
    TaskController.deleteTask
@@ -95,6 +97,7 @@ router.get("/:projectId/team",
 )
 
 router.post("/:projectId/team/find",
+   hasAuthorization,
    body('email')
       .isEmail().toLowerCase().withMessage('Invalid Email'),
    handleInputErrors,
@@ -102,6 +105,7 @@ router.post("/:projectId/team/find",
 )
 
 router.post("/:projectId/team",
+   hasAuthorization,
    body('id')
       .isMongoId().withMessage("Id not valid"),
    handleInputErrors,

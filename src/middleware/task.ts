@@ -41,3 +41,11 @@ export function taskBelongsProject(
    }
    next();
 }
+
+export function hasAuthorization(req: Request, res: Response, next: NextFunction) {
+   if (req.user.id.toString() !== req.project.manager.toString()) {
+      const error = new Error("Bad Request");
+      return res.status(400).send({ status: "error", message: error.message });
+   }
+   next();
+}
