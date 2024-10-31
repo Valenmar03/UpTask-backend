@@ -27,7 +27,9 @@ export class TaskController {
 
    static getTasksById = async (req: Request, res: Response) => {
       try {
-         const task = req.task
+         console.log(req.task.id)
+         const task = await Task.findById(req.task.id)
+            .populate({path: 'completedBy', select: 'id name email'})
          res.json(task);
       } catch (error) {
          res.status(500).send({ status: "error", message: error.message });
@@ -36,7 +38,7 @@ export class TaskController {
 
    static updateTask = async (req: Request, res: Response) => {
       try {
-         const task = req.task
+         const task = req.task;
          task.name = req.body.name;
          task.description = req.body.description;
          await task.save();
@@ -49,9 +51,9 @@ export class TaskController {
 
    static deleteTask = async (req: Request, res: Response) => {
       try {
-         const { taskId } = req.params
+         const { taskId } = req.params;
          const project = req.project;
-         const task = req.task
+         const task = req.task;
          project.tasks = project.tasks.filter(
             (task) => task._id.toString() !== taskId
          );
@@ -65,11 +67,17 @@ export class TaskController {
 
    static changeTaskStatus = async (req: Request, res: Response) => {
       try {
-         const task = req.task
+         const task = req.task;
          const { status } = req.body;
-         task.status = status
+         task.status = status;
+         status === "pending"
+            ? (req.task.completedBy = null)
+            : (req.task.completedBy = req.user.id);
          await task.save();
-         res.json({ status: "success", message: "Status changed successfully" });
+         res.json({
+            status: "success",
+            message: "Status changed successfully",
+         });
       } catch (error) {
          res.status(500).send({ status: "error", message: error.message });
       }
