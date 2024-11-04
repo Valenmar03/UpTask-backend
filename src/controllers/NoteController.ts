@@ -44,8 +44,10 @@ export class NoteController {
             return res.status(404).send({ error: error.message})
         }
 
+        req.task.notes = req.task.notes.filter(note => note.toString() !== noteId.toString())
+
         try {
-            await note.deleteOne()
+            await Promise.allSettled([req.task.save(), note.deleteOne()])
             res.send({ status: 'success', message: 'Note deleted successfully'})
 
         } catch (error) {
