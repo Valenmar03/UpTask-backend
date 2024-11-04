@@ -8,6 +8,7 @@ import { projectExists } from "../middleware/project";
 import { hasAuthorization, taskBelongsProject, taskExists } from "../middleware/task";
 import { authenticate } from "../middleware/auth";
 import { TeamMemberController } from "../controllers/TeamController";
+import { NoteController } from "../controllers/NoteController";
 
 const router = Router();
 
@@ -47,7 +48,6 @@ router.delete("/:id",
 
 
 router.param('projectId', projectExists) // Ejecuta projectExists en todas los endpoints que tengan "/:projectId" como param
-
 
 router.post('/:projectId/tasks', 
    body("name").notEmpty().withMessage("Name is required"),
@@ -119,5 +119,11 @@ router.delete("/:projectId/team/:userId",
    TeamMemberController.removeMemberById
 )
 
+router.post("/:projectId/tasks/:taskId/notes",
+   body('content')
+      .notEmpty().withMessage("Content is required"),
+   handleInputErrors,
+   NoteController.createNote
+)
 
 export default router;
