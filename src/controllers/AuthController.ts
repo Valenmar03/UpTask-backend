@@ -182,7 +182,7 @@ export class AuthController {
 
             await Promise.allSettled([user.save(), tokenExists.deleteOne()])
 
-            res.send('Password succesfully updated. Reditecting...')
+            res.send('Password succesfully updated. Redirecting...')
         } catch (error) {
             res.status(500).send({error: error.message})
         }
@@ -190,5 +190,24 @@ export class AuthController {
 
     static user = async (req: Request, res: Response) => {
           return res.send(req.user)
+    }
+
+    static updateProfile = async (req: Request, res: Response) => {
+        const { name, email } = req.body
+
+        const userExists = await User.findOne({email})
+        if(userExists && userExists.id.toString() !== req.body.id.toString()) {
+            const error = new Error('Email already exists')
+            return res.status(409).json({error: error.message})
+        }
+
+        req.user.name = name
+        req.user.email = email
+        try {
+            await req.user.save()
+            res.send({status: 'success', message: 'Profile updated successfully'})
+        } catch (error) {
+            res.status(500).send({error: 'Hubo un error'})
+        }
     }
 }

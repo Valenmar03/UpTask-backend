@@ -82,4 +82,15 @@ router.get('/user',
     AuthController.user
 )
 
+router.put('/profile',
+    authenticate,
+    body('name')
+        .notEmpty().withMessage('Account name is required'),
+    body('email')
+        .notEmpty().withMessage('Email is required'),
+    handleInputErrors,
+    AuthController.updateProfile
+)
+
+
 export default router
