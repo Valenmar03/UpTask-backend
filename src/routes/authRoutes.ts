@@ -92,5 +92,22 @@ router.put('/profile',
     AuthController.updateProfile
 )
 
+router.post('/update-password',
+    authenticate,
+    body('current_password')
+        .notEmpty().withMessage('Current Password is required'),
+    body('password')
+        .isLength({min: 8}).withMessage('The Password is to short, must have at least 8 characters'),
+    body('password_confirmation')
+        .custom((value, {req}) => {
+            if(value !== req.body.password){
+                throw new Error('The passwords do not match')
+            }
+            return true
+        }),
+    handleInputErrors,
+    AuthController.updateLoguedUserPassword
+)
+
 
 export default router
