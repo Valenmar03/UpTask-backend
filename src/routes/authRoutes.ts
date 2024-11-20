@@ -92,7 +92,7 @@ router.put('/profile',
     AuthController.updateProfile
 )
 
-router.post('/update-password',
+router.post('/profile/update-password',
     authenticate,
     body('current_password')
         .notEmpty().withMessage('Current Password is required'),
