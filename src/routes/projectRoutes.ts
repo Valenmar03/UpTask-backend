@@ -30,24 +30,25 @@ router.get(
    ProjectController.getProjectById
 );
 
+router.param('projectId', projectExists) // Ejecuta projectExists en todas los endpoints que tengan "/:projectId" como param
+
 router.put(
-   "/:id",
-   param("id").isMongoId().withMessage("Id not valid"),
+   "/:projectId",
+   param("projectId").isMongoId().withMessage("Id not valid"),
    body("projectName").notEmpty().withMessage("Project Name is required"),
    body("clientName").notEmpty().withMessage("Client Name is required"),
    body("description").notEmpty().withMessage("Description is required"),
    handleInputErrors,
+   hasAuthorization,
    ProjectController.updateProject
 );
 
-router.delete("/:id",
-   param("id").isMongoId().withMessage("Id not valid"),
+router.delete("/:projectId",
+   param("projectId").isMongoId().withMessage("Id not valid"),
    handleInputErrors,
+   hasAuthorization,
    ProjectController.deleteProject
 )
-
-
-router.param('projectId', projectExists) // Ejecuta projectExists en todas los endpoints que tengan "/:projectId" como param
 
 router.post('/:projectId/tasks', 
    body("name").notEmpty().withMessage("Name is required"),
